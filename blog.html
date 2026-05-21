@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog | Tyler Millhouse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <script src="nav.js"></script>
+
+  <main>
+    <div class="container">
+      <div class="page-header">
+        <h1>Blog</h1>
+        <p>Thoughts with nowhere else to go...</p>
+      </div>
+      <div class="blog-filters" id="blog-filters"></div>
+      <div class="blog-list" id="blog-list"></div>
+    </div>
+  </main>
+
+  <script>
+    // ── Irregular plurals map (plural → singular, all lowercase) ──────────
+    const IRREGULAR_PLURALS = {
+      "analyses": "analysis", "theses": "thesis", "diagnoses": "diagnosis",
+      "hypotheses": "hypothesis", "crises": "crisis", "phenomena": "phenomenon",
+      "criteria": "criterion", "data": "datum", "media": "medium",
+      "bacteria": "bacterium", "curricula": "curriculum", "memoranda": "memorandum",
+      "spectra": "spectrum", "stimuli": "stimulus", "alumni": "alumnus",
+      "cacti": "cactus", "foci": "focus", "fungi": "fungus", "nuclei": "nucleus",
+      "radii": "radius", "syllabi": "syllabus", "indices": "index",
+      "appendices": "appendix", "matrices": "matrix", "vertices": "vertex",
+      "axes": "axis", "bases": "base", "children": "child", "men": "man",
+      "women": "woman", "teeth": "tooth", "feet": "foot", "mice": "mouse",
+      "geese": "goose", "oxen": "ox", "people": "person", "lives": "life",
+      "knives": "knife", "wives": "wife", "leaves": "leaf", "wolves": "wolf",
+      "halves": "half", "shelves": "shelf", "selves": "self", "elves": "elf",
+      "loaves": "loaf", "scarves": "scarf", "calves": "calf",
+      "potatoes": "potato", "tomatoes": "tomato", "heroes": "hero",
+      "echoes": "echo", "vetoes": "veto", "embargoes": "embargo",
+      "photos": "photo", "pianos": "piano", "solos": "solo", "zoos": "zoo",
+      "fish": "fish", "sheep": "sheep", "deer": "deer", "species": "species",
+      "series": "series", "means": "means", "news": "news",
+      "mathematics": "mathematics", "physics": "physics", "ethics": "ethics",
+      "economics": "economics", "politics": "politics", "statistics": "statistics",
+      "algorithms": "algorithm", "paradigms": "paradigm",
+      "epistemologies": "epistemology", "ontologies": "ontology",
+      "methodologies": "methodology", "theories": "theory",
+      "hypotheses": "hypothesis", "philosophies": "philosophy",
+      "categories": "category", "properties": "property",
+      "quantities": "quantity", "qualities": "quality",
+      "communities": "community", "universities": "university",
+      "abilities": "ability", "possibilities": "possibility",
+      "activities": "activity", "economies": "economy",
+      "discoveries": "discovery", "technologies": "technology",
+      "strategies": "strategy", "policies": "policy",
+      "studies": "study", "bodies": "body", "copies": "copy",
+      "countries": "country", "stories": "story", "families": "family",
+      "libraries": "library", "centuries": "century", "parties": "party",
+      "boundaries": "boundary", "injuries": "injury", "memories": "memory",
+      "agencies": "agency", "frequencies": "frequency",
+      "emergencies": "emergency", "tendencies": "tendency",
+      "dependencies": "dependency", "inconsistencies": "inconsistency",
+      "inefficiencies": "inefficiency", "efficiencies": "efficiency",
+      "uncertainties": "uncertainty", "identities": "identity",
+      "entities": "entity", "quantities": "quantity",
+    };
+
+    // ── Normalize a single word to singular title-case ────────────────────
+    function normalizeSingleWord(word) {
+      const lower = word.toLowerCase();
+      if (IRREGULAR_PLURALS[lower]) return IRREGULAR_PLURALS[lower];
+      // Regular rules
+      if (lower.endsWith('ies') && lower.length > 3) return lower.slice(0, -3) + 'y';
+      if (lower.endsWith('ses') || lower.endsWith('xes') ||
+          lower.endsWith('zes') || lower.endsWith('ches') ||
+          lower.endsWith('shes')) return lower.slice(0, -2);
+      if (lower.endsWith('s') && !lower.endsWith('ss') && lower.length > 2) {
+        return lower.slice(0, -1);
+      }
+      return lower;
+    }
+
+    // ── Normalize a full tag (may be multi-word) ──────────────────────────
+    function normalizeTag(tag) {
+      const trimmed = tag.trim();
+      // *tag text* → use exactly as written, stripping the asterisks
+      if (trimmed.startsWith('*') && trimmed.endsWith('*') && trimmed.length > 2) {
+        return trimmed.slice(1, -1);
+      }
+      return trimmed.split(/\s+/)
+        .map(w => {
+          // Preserve all-caps words (acronyms like AI, ML, NLP)
+          if (w.length > 1 && w === w.toUpperCase()) return normalizeSingleWord(w).toUpperCase();
+          const singular = normalizeSingleWord(w);
+          return singular.charAt(0).toUpperCase() + singular.slice(1);
+        })
+        .join(' ');
+    }
+
+    // ── Strip markdown for excerpt ────────────────────────────────────────
+    function stripMarkdown(md) {
+      return md
+        .replace(/!\[.*?\]\(.*?\)/g, '')      // images
+        .replace(/\[([^\]]+)\]\(.*?\)/g, '$1') // links → text
+        .replace(/#{1,6}\s*/g, '')             // headings
+        .replace(/(\*\*|__)(.*?)\1/g, '$2')   // bold
+        .replace(/(\*|_)(.*?)\1/g, '$2')      // italic
+        .replace(/`{1,3}[^`]*`{1,3}/g, '')    // code
+        .replace(/>\s*/g, '')                  // blockquotes
+        .replace(/[-*+]\s+/g, '')             // list markers
+        .replace(/\n+/g, ' ')                 // newlines → space
+        .trim();
+    }
+
+    function makeExcerpt(content, maxLen = 200) {
+      const plain = stripMarkdown(content);
+      if (plain.length <= maxLen) return plain;
+      const cut = plain.lastIndexOf(' ', maxLen);
+      return plain.slice(0, cut > 0 ? cut : maxLen) + '…';
+    }
+
+    // ── Format date string MM/DD/YYYY → "Month D, YYYY" ──────────────────
+    function formatDate(dateStr) {
+      const [m, d, y] = dateStr.split('/').map(Number);
+      return new Date(y, m - 1, d).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric'
+      });
+    }
+
+    // ── Render ────────────────────────────────────────────────────────────
+    let allPosts = [];
+    let activeFilters = new Set();
+    let topTags = [];
+
+    let expandedIndex = null;
+
+    function renderPosts() {
+      const list = document.getElementById('blog-list');
+      const visible = activeFilters.size === 0
+        ? allPosts
+        : allPosts.filter(p =>
+            [...activeFilters].every(f => p.normalizedTags.includes(f))
+          );
+
+      if (visible.length === 0) {
+        list.innerHTML = '<p style="color:var(--gray-500);font-size:0.875rem;">No posts match the selected filters.</p>';
+        expandedIndex = null;
+        return;
+      }
+
+      list.innerHTML = visible.map((p, i) => {
+        const isExpanded = expandedIndex === i;
+        const body = isExpanded
+          ? `<div class="blog-body">${marked.parse(p.content)}</div>`
+          : `<p class="blog-excerpt">${makeExcerpt(p.content)}</p>`;
+        return `
+          <div class="blog-card${isExpanded ? ' expanded' : ''}" data-index="${i}" style="cursor:pointer;">
+            <h3>${p.title}</h3>
+            <div class="blog-card-meta">
+              <span class="blog-date">${formatDate(p.date)}</span>
+              <span class="blog-meta-sep">|</span>
+              <span class="blog-authors">${p.authors.join(', ')}</span>
+            </div>
+            ${body}
+            <div class="tags">
+              ${p.normalizedTags.map(t => `<span class="tag">${t}</span>`).join('')}
+            </div>
+          </div>`;
+      }).join('');
+
+      list.querySelectorAll('.blog-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const i = Number(card.dataset.index);
+          expandedIndex = (expandedIndex === i) ? null : i;
+          renderPosts();
+        });
+      });
+    }
+
+    function renderFilters() {
+      const container = document.getElementById('blog-filters');
+      container.innerHTML = topTags.map(tag => `
+        <button class="filter-tag${activeFilters.has(tag) ? ' active' : ''}" data-tag="${tag}">${tag}</button>
+      `).join('') + '<span class="filter-hint">(click to filter posts)</span>';
+      container.querySelectorAll('.filter-tag').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tag = btn.dataset.tag;
+          if (activeFilters.has(tag)) activeFilters.delete(tag);
+          else activeFilters.add(tag);
+          renderFilters();
+          renderPosts();
+        });
+      });
+    }
+
+    // ── Load posts ────────────────────────────────────────────────────────
+    async function loadBlog() {
+      const list = document.getElementById('blog-list');
+      try {
+        const manifest = await fetch('posts/index.json').then(r => r.json());
+        const posts = await Promise.all(
+          manifest.map(f => fetch(`posts/${f}`).then(r => r.json()))
+        );
+
+        // Sort reverse chronological
+        posts.sort((a, b) => {
+          const parse = s => { const [m,d,y] = s.split('/'); return new Date(y,m-1,d); };
+          return parse(b.date) - parse(a.date);
+        });
+
+        // Attach normalized tags to each post
+        allPosts = posts.map(p => ({
+          ...p,
+          normalizedTags: (p.tags || []).map(normalizeTag)
+        }));
+
+        // Count tag frequency and pick top 5
+        const freq = {};
+        allPosts.forEach(p => p.normalizedTags.forEach(t => {
+          freq[t] = (freq[t] || 0) + 1;
+        }));
+        topTags = Object.entries(freq)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 5)
+          .map(([tag]) => tag);
+
+        renderFilters();
+        renderPosts();
+      } catch (err) {
+        list.innerHTML = '<p style="color:var(--gray-500);font-size:0.875rem;">Posts could not be loaded. Note: this page requires an HTTP server (not file://).</p>';
+        console.error(err);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadBlog);
+  </script>
+</body>
+</html>

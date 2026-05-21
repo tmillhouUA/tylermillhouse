@@ -4,8 +4,10 @@ document.addEventListener('DOMContentLoaded', function () {
     { label: 'About Me',       href: 'index.html' },
     { label: 'CV',             href: 'cv.html' },
     { label: 'Publications',   href: 'publications.html' },
+    { label: 'Tools',          href: 'tools.html' },
     { label: 'Visualizations', href: 'visualizations.html' },
     { label: 'Photography',    href: 'photography.html' },
+    { label: 'Blog',           href: 'blog.html' },
   ];
 
   const currentFile = location.pathname.split('/').pop() || 'index.html';

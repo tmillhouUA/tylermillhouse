@@ -274,17 +274,20 @@ footer {
   padding: 1.5rem;
   color: inherit;
   text-decoration: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  height: 300px;
+  overflow: hidden;
 }
-.viz-card:hover { border-color: var(--accent); box-shadow: 0 4px 16px rgba(37,99,235,0.08); text-decoration: none; }
-.viz-card:hover h3 { color: var(--accent); }
 
-.viz-card h3 { color: var(--gray-900); margin-bottom: 0.5rem; transition: color 0.15s; }
-.viz-card p { font-size: 0.875rem; color: var(--gray-600); line-height: 1.6; margin-bottom: 1rem; }
+.viz-card h3 { color: var(--gray-900); margin-bottom: 0.5rem; }
+.viz-card h3 a { color: inherit; text-decoration: none; }
+.viz-card h3 a:hover { color: var(--accent); text-decoration: none; }
+
+.card-live-link { float: right; color: var(--gray-300); text-decoration: none; transition: color 0.15s; }
+.card-live-link:hover { color: var(--accent); text-decoration: none; }
+.viz-card p { font-size: 0.875rem; color: var(--gray-600); line-height: 1.6; margin-bottom: 0; height: 8.4rem; overflow: hidden; }
 .viz-card .tags { margin-top: 0; }
 
 .external-icon { float: right; color: var(--gray-300); margin-top: 0.2rem; }
-.viz-card:hover .external-icon { color: var(--accent); }
 
 /* ── Photography ────────────────────────────────────────────── */
 .photo-section { margin-bottom: 3.5rem; }
@@ -326,6 +329,93 @@ footer {
   transition: opacity 0.2s;
 }
 .photo-item:hover .photo-caption { opacity: 1; }
+
+/* ── Blog ───────────────────────────────────────────────────── */
+.blog-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.filter-tag {
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  font-size: 0.8rem;
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  font-family: var(--font-sans);
+}
+.filter-tag:hover { background: var(--gray-200); }
+.filter-tag.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.filter-hint {
+  font-size: 0.8rem;
+  color: var(--gray-500);
+  opacity: 0;
+  transition: opacity 0.25s;
+  align-self: center;
+  pointer-events: none;
+}
+.blog-filters:hover .filter-hint { opacity: 0.5; }
+
+.blog-list { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.blog-card {
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.blog-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 16px rgba(37,99,235,0.08);
+}
+
+.blog-card-meta {
+  display: flex;
+  gap: 0.67rem;
+  font-size: 0.8rem;
+  color: var(--gray-500);
+  margin-bottom: 0.4rem;
+}
+
+.blog-card h3 { color: var(--gray-900); margin-bottom: 0.5rem; }
+.blog-meta-sep { color: var(--gray-300); }
+.blog-excerpt { font-size: 0.875rem; color: var(--gray-600); margin-bottom: 1rem; }
+
+.card-repo-link { margin-top: .75rem; margin-bottom: 1rem; }
+.card-repo-link a {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
+}
+.card-repo-link a:hover { text-decoration: underline; }
+
+.more-coming-soon {
+  text-align: center;
+  color: var(--gray-400);
+  font-size: 0.875rem;
+  margin-top: 2.5rem;
+}
+
+.blog-card.expanded {
+  border-color: var(--accent);
+  box-shadow: 0 4px 16px rgba(37,99,235,0.08);
+}
+
+.blog-body { margin-bottom: 1rem; color: var(--gray-700); line-height: 1.7; }
+.blog-body p { margin-bottom: 1rem; }
+.blog-body h1, .blog-body h2, .blog-body h3 { margin: 1.5rem 0 0.5rem; }
+.blog-body ul, .blog-body ol { margin: 0.5rem 0 1rem 1.5rem; }
+.blog-body li { margin-bottom: 0.25rem; }
+.blog-body code { font-size: 0.85em; background: var(--gray-100); padding: 0.1em 0.35em; border-radius: 4px; }
+.blog-body pre { background: var(--gray-100); padding: 1rem; border-radius: 8px; overflow-x: auto; margin-bottom: 1rem; }
+.blog-body blockquote { border-left: 3px solid var(--gray-300); padding-left: 1rem; color: var(--gray-500); margin: 0 0 1rem; }
 
 /* ── Responsive ─────────────────────────────────────────────── */
 @media (max-width: 680px) {
