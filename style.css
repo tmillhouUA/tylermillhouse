@@ -43,7 +43,7 @@ h3 { font-size: 1.125rem; }
 
 /* ── Layout ─────────────────────────────────────────────────── */
 .container { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
-main { flex: 1; padding: 3rem 0 6rem; }
+main { flex: 1; padding: 2rem 0 6rem; }
 
 /* ── Navigation ─────────────────────────────────────────────── */
 header {
@@ -417,13 +417,69 @@ footer {
 .blog-body pre { background: var(--gray-100); padding: 1rem; border-radius: 8px; overflow-x: auto; margin-bottom: 1rem; }
 .blog-body blockquote { border-left: 3px solid var(--gray-300); padding-left: 1rem; color: var(--gray-500); margin: 0 0 1rem; }
 
+/* ── Mobile nav ─────────────────────────────────────────────── */
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--gray-700);
+  cursor: pointer;
+  padding: 0.25rem 0;
+  line-height: 1;
+  margin-right: 1.5rem;
+}
+
+.nav-mobile-menu {
+  display: none;
+  flex-direction: column;
+  background: #fff;
+  border-top: 1px solid var(--gray-200);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.nav-mobile-menu a {
+  display: block;
+  padding: 0.875rem 1.5rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--gray-700);
+  text-decoration: none;
+  border-bottom: 1px solid var(--gray-200);
+  transition: background 0.15s, color 0.15s;
+}
+.nav-mobile-menu a:last-child { border-bottom: none; }
+.nav-mobile-menu a:hover { background: var(--gray-50); color: var(--gray-900); }
+.nav-mobile-menu a.active { color: var(--accent); background: var(--gray-50); }
+
 /* ── Responsive ─────────────────────────────────────────────── */
+/* Desktop: hide the above-grid about header; show h1/hr inside .bio */
+.about-page-header { display: none; }
+.about-mobile-rule { display: none; }
+
 @media (max-width: 680px) {
-  .about-grid { grid-template-columns: 1fr; }
+  /* Show the above-grid header; hide h1/hr inside .bio */
+  .about-page-header { display: block; }
+  .bio h1, .bio .heading-rule { display: none; }
+  .about-mobile-rule { display: block; width: 100%; margin: 1rem 0 0; }
+  .about-grid > div.bio { margin-top: 0; padding-top: 0; }
+
+  .about-grid { grid-template-columns: 1fr; gap: 1rem; }
+  .about-grid > div:first-child {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
   .headshot-wrap { margin: 0 auto; }
+  .contact-block { text-align: center; }
+
   .photo-grid { grid-template-columns: repeat(2, 1fr); }
   .viz-grid { grid-template-columns: 1fr; }
-  .nav-tabs a { padding: 0.4rem 0.5rem; font-size: 0.8rem; }
+
+  .nav-tabs { display: none; }
+  .nav-hamburger { display: block; }
+  .nav-mobile-menu.open { display: flex; }
 }
 
 /* ── Coming Soon Overlay ─────────────────────────────────────── */
