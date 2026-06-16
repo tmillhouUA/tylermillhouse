@@ -1,3 +1,47 @@
+/* ── Self-hosted fonts ──────────────────────────────────────── */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url('fonts/inter-400.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url('fonts/inter-500.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: block;
+  src: url('fonts/inter-600.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url('fonts/lora-400.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: block;
+  src: url('fonts/lora-400i.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: block;
+  src: url('fonts/lora-600.ttf') format('truetype');
+}
+
 /* ── Reset & Base ───────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -17,7 +61,11 @@
   --font-serif:  'Lora', Georgia, serif;
 }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-y: scroll; }
+
+::-webkit-scrollbar { width: 12px; }
+::-webkit-scrollbar-track { background: var(--gray-100); }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 6px; }
 
 body {
   font-family: var(--font-sans);
@@ -308,6 +356,12 @@ footer {
   box-shadow: 0 1px 3px rgba(0,0,0,0.07);
 }
 
+.photo-item a {
+  display: block;
+  width: 100%; height: 100%;
+  position: relative;
+}
+
 .photo-item img {
   width: 100%; height: 100%;
   object-fit: cover;
@@ -480,6 +534,29 @@ footer {
   .pub-item { flex-direction: column; align-items: center; }
   .pub-cover.book, .pub-cover.article { width: 100%; max-width: 216px; }
   .pub-info { width: 100%; }
+
+  .photo-grid { grid-template-columns: 1fr; }
+  .photo-item { aspect-ratio: unset; overflow: visible; border: none; background: none; box-shadow: none; }
+  .photo-item a { position: static; height: auto; }
+  .photo-item img {
+    aspect-ratio: 1;
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    border: 1px solid var(--gray-200);
+  }
+  .photo-caption {
+    position: static;
+    background: none;
+    color: var(--gray-500);
+    font-size: 0.8rem;
+    opacity: 1;
+    padding: 0.4rem 0 0;
+    display: block;
+  }
+  .photo-item:hover .photo-caption { opacity: 1; }
+  .photo-item:hover img { transform: none; }
 
   .nav-tabs { display: none; }
   .nav-hamburger { display: block; }
