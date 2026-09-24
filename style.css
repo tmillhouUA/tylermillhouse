@@ -337,6 +337,43 @@ footer {
 
 .external-icon { float: right; color: var(--gray-300); margin-top: 0.2rem; }
 
+/* ── Tools: sections and compact list ───────────────────────── */
+.tool-section { margin-bottom: 3.5rem; }
+
+.tool-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+/* Each row is a single <a>, so the whole box is clickable */
+.tool-row {
+  display: block;
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 0.9rem 1.5rem;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.15s;
+}
+.tool-row:hover { border-color: var(--accent); text-decoration: none; }
+
+/* Line 1: title left, link icon right */
+.tool-row-header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.tool-row h3 { font-size: 1.05rem; color: var(--gray-900); margin: 0; transition: color 0.15s; }
+.tool-row-icon { flex-shrink: 0; color: var(--gray-400); transition: color 0.15s; }
+.tool-row:hover h3,
+.tool-row:hover .tool-row-icon { color: var(--accent); }
+
+/* Line 2: one-sentence description, clipped to a single line */
+.tool-row p {
+  font-size: 0.875rem;
+  color: var(--gray-600);
+  margin: 0.2rem 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Tags are kept in the markup (for future filtering) but not displayed */
+.tool-row .tags { display: none; }
+
 /* ── Photography ────────────────────────────────────────────── */
 .photo-section { margin-bottom: 3.5rem; }
 
